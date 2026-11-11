@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program & Kegiatan — SIMONEV</title>
+    <meta name="description" content="Kelola program dan kegiatan OPD - SIMONEV">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-brand">SIMONEV</span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item" id="navDashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="program.html" class="nav-item active admin-only" id="navProgram"><i class="fas fa-clipboard-list"></i><span>Program & Kegiatan</span></a>
+            <a href="input-realisasi.html" class="nav-item admin-only" id="navRealisasi"><i class="fas fa-edit"></i><span>Input Realisasi</span></a>
+            <a href="laporan.html" class="nav-item" id="navLaporan"><i class="fas fa-file-alt"></i><span>Laporan</span></a>
+            <a href="log-aktivitas.html" class="nav-item admin-only" id="navLog"><i class="fas fa-history"></i><span>Log Aktivitas</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">-</span>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i><span>Keluar</span></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <header class="top-header">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <h1 class="page-title">Program & Kegiatan</h1>
+            <div class="header-right"><span class="current-date" id="currentDate"></span></div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Action Bar -->
+            <div class="flex-between mb-20">
+                <div></div>
+                <button class="btn btn-primary" id="btnTambahProgram">
+                    <i class="fas fa-plus"></i> Tambah Program
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label class="form-label">Tahun</label>
+                    <select class="form-select" id="filterTahun"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bidang</label>
+                    <select class="form-select" id="filterBidang"></select>
+                </div>
+                <div class="form-group search-box">
+                    <label class="form-label">Cari</label>
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="form-input" id="searchProgram" placeholder="Cari program atau kegiatan...">
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="glass-card">
+                <div class="table-container">
+                    <table class="data-table" id="tabelProgram">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode</th>
+                                <th>Nama Program</th>
+                                <th>Kegiatan</th>
+                                <th>Indikator</th>
+                                <th>Target</th>
+                                <th>Pagu Anggaran</th>
+                                <th>Bidang</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="programBody">
+                            <tr><td colspan="9"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="programPagination" class="pagination"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Tambah/Edit Program -->
+    <div class="modal-overlay" id="modalProgram">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalProgramTitle">Tambah Program/Kegiatan</h3>
+                <button class="modal-close" onclick="closeModal('modalProgram')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="formProgram">
+                    <input type="hidden" id="programId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fKodeProgram">Kode Program</label>
+                            <input type="text" class="form-input" id="fKodeProgram" placeholder="Contoh: 01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fNamaProgram">Nama Program</label>
+                            <input type="text" class="form-input" id="fNamaProgram" placeholder="Nama program" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fKodeKegiatan">Kode Kegiatan</label>
+                            <input type="text" class="form-input" id="fKodeKegiatan" placeholder="Contoh: 01.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fNamaKegiatan">Nama Kegiatan</label>
+                            <input type="text" class="form-input" id="fNamaKegiatan" placeholder="Nama kegiatan">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fKodeSubKegiatan">Kode Sub Kegiatan</label>
+                            <input type="text" class="form-input" id="fKodeSubKegiatan" placeholder="Contoh: 01.01.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fNamaSubKegiatan">Nama Sub Kegiatan</label>
+                            <input type="text" class="form-input" id="fNamaSubKegiatan" placeholder="Nama sub kegiatan">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="fIndikator">Indikator Kinerja</label>
+                        <textarea class="form-textarea" id="fIndikator" placeholder="Indikator kinerja program" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fSatuan">Satuan</label>
+                            <input type="text" class="form-input" id="fSatuan" placeholder="Contoh: %, Unit, Orang" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fTargetTahunan">Target Tahunan</label>
+                            <input type="number" class="form-input" id="fTargetTahunan" placeholder="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="fPaguAnggaran">Pagu Anggaran (Rp)</label>
+                            <input type="number" class="form-input" id="fPaguAnggaran" placeholder="0" step="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fTahun">Tahun</label>
+                            <select class="form-select" id="fTahun" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="fBidang">Bidang</label>
+                        <select class="form-select" id="fBidang" required></select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('modalProgram')">Batal</button>
+                <button class="btn btn-primary" id="btnSimpanProgram"><i class="fas fa-save"></i> Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hapus -->
+    <div class="modal-overlay" id="modalHapus">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title">Konfirmasi Hapus</h3>
+                <button class="modal-close" onclick="closeModal('modalHapus')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); line-height: 1.7;">
+                    <i class="fas fa-exclamation-triangle text-amber" style="margin-right: 8px;"></i>
+                    Apakah Anda yakin ingin menghapus program ini? Data realisasi terkait juga akan terhapus.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('modalHapus')">Batal</button>
+                <button class="btn btn-danger" id="btnKonfirmasiHapus"><i class="fas fa-trash"></i> Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/program.js"></script>
+</body>
+</html>

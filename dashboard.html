@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — SIMONEV</title>
+    <meta name="description" content="Dashboard monitoring dan evaluasi kinerja OPD - SIMONEV">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-brand">SIMONEV</span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active" id="navDashboard">
+                <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+            </a>
+            <a href="program.html" class="nav-item admin-only" id="navProgram">
+                <i class="fas fa-clipboard-list"></i><span>Program & Kegiatan</span>
+            </a>
+            <a href="input-realisasi.html" class="nav-item admin-only" id="navRealisasi">
+                <i class="fas fa-edit"></i><span>Input Realisasi</span>
+            </a>
+            <a href="laporan.html" class="nav-item" id="navLaporan">
+                <i class="fas fa-file-alt"></i><span>Laporan</span>
+            </a>
+            <a href="log-aktivitas.html" class="nav-item admin-only" id="navLog">
+                <i class="fas fa-history"></i><span>Log Aktivitas</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">-</span>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i><span>Keluar</span></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <header class="top-header">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <h1 class="page-title">Dashboard</h1>
+            <div class="header-right">
+                <span class="current-date" id="currentDate"></span>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label class="form-label">Tahun</label>
+                    <select class="form-select" id="filterTahun"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bidang</label>
+                    <select class="form-select" id="filterBidang"></select>
+                </div>
+                <button class="btn btn-primary" id="btnFilter">
+                    <i class="fas fa-filter"></i> Terapkan
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon cyan"><i class="fas fa-clipboard-list"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statTotalProgram">0</div>
+                        <div class="stat-label">Total Program</div>
+                    </div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon emerald"><i class="fas fa-bullseye"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statCapaianFisik">0%</div>
+                        <div class="stat-label">Rata-rata Capaian Fisik</div>
+                    </div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon amber"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statTotalPagu">Rp 0</div>
+                        <div class="stat-label">Total Pagu Anggaran</div>
+                    </div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon red"><i class="fas fa-wallet"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statRealisasiKeuangan">Rp 0</div>
+                        <div class="stat-label">Total Realisasi Keuangan</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="card-header"><h3>Capaian Fisik per Program (Top 10)</h3></div>
+                    <div class="chart-wrapper"><canvas id="chartCapaianFisik"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="card-header"><h3>Realisasi vs Sisa Anggaran</h3></div>
+                    <div class="chart-wrapper"><canvas id="chartAnggaran"></canvas></div>
+                </div>
+                <div class="chart-card full-width">
+                    <div class="card-header"><h3>Target vs Realisasi per Triwulan</h3></div>
+                    <div class="chart-wrapper"><canvas id="chartTriwulan"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="glass-card mt-20">
+                <div class="card-header"><h3>Ringkasan Program</h3></div>
+                <div class="table-container">
+                    <table class="data-table" id="tabelRingkasan">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode</th>
+                                <th>Nama Program</th>
+                                <th>Target</th>
+                                <th>Realisasi</th>
+                                <th>Capaian</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ringkasanBody">
+                            <tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

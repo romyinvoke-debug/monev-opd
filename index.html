@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMONEV — Masuk</title>
+    <meta name="description" content="SIMONEV - Sistem Monitoring dan Evaluasi Kinerja OPD. Login untuk mengakses dashboard monitoring.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card glass-card">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>SIMONEV</h1>
+                <p>Sistem Monitoring & Evaluasi Kinerja OPD</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Masuk</button>
+                <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Daftar</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Masukkan password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="btnLogin">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label" for="regNama">Nama Lengkap</label>
+                    <input type="text" class="form-input" id="regNama" placeholder="Nama lengkap Anda" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="regNip">NIP</label>
+                        <input type="text" class="form-input" id="regNip" placeholder="18 digit NIP" maxlength="18">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="regJabatan">Jabatan</label>
+                        <input type="text" class="form-input" id="regJabatan" placeholder="Jabatan Anda">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regBidang">Bidang</label>
+                    <select class="form-select" id="regBidang" required>
+                        <option value="">Pilih Bidang</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regEmail">Email</label>
+                    <input type="email" class="form-input" id="regEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Password</label>
+                    <input type="password" class="form-input" id="regPassword" placeholder="Minimal 6 karakter" minlength="6" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="btnRegister">
+                    <i class="fas fa-user-plus"></i> Daftar
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="auth-footer">
+                <span id="authFooterText">Belum punya akun? Klik tab Daftar</span>
+            </div>
+
+            <!-- Department Name -->
+            <div class="dept-name">
+                Dinas Koperasi, Usaha Kecil dan Menengah,<br>
+                Perindustrian dan Perdagangan
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ============================================
+        // Login & Register Page Logic
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Jika sudah login, redirect ke dashboard
+            await checkExistingSession();
+
+            // Populate bidang dropdown
+            const regBidang = document.getElementById('regBidang');
+            if (regBidang) {
+                regBidang.innerHTML = getBidangOptions(null, false);
+            }
+        });
+
+        // Switch tab Login / Register
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+            const footerText = document.getElementById('authFooterText');
+
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                footerText.textContent = 'Belum punya akun? Klik tab Daftar';
+            } else {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+                tabLogin.classList.remove('active');
+                tabRegister.classList.add('active');
+                footerText.textContent = 'Sudah punya akun? Klik tab Masuk';
+            }
+        }
+
+        // Handle Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLogin');
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            const { user, error } = await login(email, password);
+
+            if (error) {
+                showToast(error, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+                return;
+            }
+
+            showToast('Login berhasil! Mengalihkan...', 'success');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 800);
+        }
+
+        // Handle Register
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnRegister');
+            const nama_lengkap = document.getElementById('regNama').value.trim();
+            const nip = document.getElementById('regNip').value.trim();
+            const jabatan = document.getElementById('regJabatan').value.trim();
+            const bidang = document.getElementById('regBidang').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            if (!bidang) {
+                showToast('Silakan pilih bidang', 'warning');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            const { user, error } = await register({
+                email, password, nama_lengkap, nip, jabatan, bidang
+            });
+
+            if (error) {
+                showToast(error, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar';
+                return;
+            }
+
+            showToast('Pendaftaran berhasil! Silakan masuk.', 'success');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar';
+
+            // Reset form & switch to login
+            document.getElementById('registerForm').reset();
+            switchTab('login');
+        }
+    </script>
+</body>
+</html>

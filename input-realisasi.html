@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Realisasi — SIMONEV</title>
+    <meta name="description" content="Input realisasi triwulanan program dan kegiatan OPD - SIMONEV">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                <span class="sidebar-brand">SIMONEV</span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item" id="navDashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="program.html" class="nav-item admin-only" id="navProgram"><i class="fas fa-clipboard-list"></i><span>Program & Kegiatan</span></a>
+            <a href="input-realisasi.html" class="nav-item active admin-only" id="navRealisasi"><i class="fas fa-edit"></i><span>Input Realisasi</span></a>
+            <a href="laporan.html" class="nav-item" id="navLaporan"><i class="fas fa-file-alt"></i><span>Laporan</span></a>
+            <a href="log-aktivitas.html" class="nav-item admin-only" id="navLog"><i class="fas fa-history"></i><span>Log Aktivitas</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">-</span>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i><span>Keluar</span></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <header class="top-header">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <h1 class="page-title">Input Realisasi Triwulanan</h1>
+            <div class="header-right"><span class="current-date" id="currentDate"></span></div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Selection Card -->
+            <div class="glass-card">
+                <div class="card-header"><h3><i class="fas fa-search" style="margin-right:8px; color:var(--accent-cyan)"></i>Pilih Program & Triwulan</h3></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="selectProgram">Program / Kegiatan</label>
+                        <select class="form-select" id="selectProgram">
+                            <option value="">Pilih Program...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="selectTriwulan">Triwulan</label>
+                        <select class="form-select" id="selectTriwulan"></select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btnLoadRealisasi">
+                    <i class="fas fa-search"></i> Muat Data
+                </button>
+            </div>
+
+            <!-- Realisasi Form -->
+            <div class="glass-card mt-20 hidden" id="realisasiFormContainer">
+                <div class="card-header">
+                    <h3 id="formTitle">Form Realisasi</h3>
+                    <span id="formBadge"></span>
+                </div>
+                <form id="formRealisasi">
+                    <!-- Realisasi Fisik -->
+                    <h4 style="margin-bottom: 16px; color: var(--accent-cyan);">
+                        <i class="fas fa-ruler-combined" style="margin-right: 8px;"></i>Realisasi Fisik
+                    </h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="targetFisik">Target Fisik</label>
+                            <input type="number" class="form-input" id="targetFisik" placeholder="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="realisasiFisik">Realisasi Fisik</label>
+                            <input type="number" class="form-input" id="realisasiFisik" placeholder="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Capaian Fisik</span>
+                        <span id="previewCapaianFisik">0,00%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill cyan" id="progressFisik" style="width: 0%"></div>
+                    </div>
+
+                    <!-- Realisasi Keuangan -->
+                    <h4 style="margin-top: 28px; margin-bottom: 16px; color: var(--accent-emerald);">
+                        <i class="fas fa-money-bill-wave" style="margin-right: 8px;"></i>Realisasi Keuangan
+                    </h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="targetKeuangan">Target Keuangan (Rp)</label>
+                            <input type="number" class="form-input" id="targetKeuangan" placeholder="0" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="realisasiKeuangan">Realisasi Keuangan (Rp)</label>
+                            <input type="number" class="form-input" id="realisasiKeuangan" placeholder="0" step="1">
+                        </div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Capaian Keuangan</span>
+                        <span id="previewCapaianKeuangan">0,00%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill emerald" id="progressKeuangan" style="width: 0%"></div>
+                    </div>
+
+                    <!-- Keterangan -->
+                    <h4 style="margin-top: 28px; margin-bottom: 16px; color: var(--accent-amber);">
+                        <i class="fas fa-comment-alt" style="margin-right: 8px;"></i>Keterangan Tambahan
+                    </h4>
+                    <div class="form-group">
+                        <label class="form-label" for="permasalahan">Permasalahan</label>
+                        <textarea class="form-textarea" id="permasalahan" placeholder="Jelaskan permasalahan yang dihadapi..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tindakLanjut">Tindak Lanjut</label>
+                        <textarea class="form-textarea" id="tindakLanjut" placeholder="Langkah tindak lanjut..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="keterangan">Keterangan</label>
+                        <textarea class="form-textarea" id="keterangan" placeholder="Keterangan tambahan..."></textarea>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 24px;">
+                        <button type="button" class="btn btn-primary" id="btnSimpanRealisasi">
+                            <i class="fas fa-save"></i> Simpan Realisasi
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Realisasi History -->
+            <div class="glass-card mt-20 hidden" id="realisasiHistoryContainer">
+                <div class="card-header"><h3><i class="fas fa-history" style="margin-right: 8px; color: var(--accent-amber);"></i>Riwayat Realisasi Program</h3></div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Triwulan</th>
+                                <th>Target Fisik</th>
+                                <th>Realisasi Fisik</th>
+                                <th>Capaian Fisik</th>
+                                <th>Target Keuangan</th>
+                                <th>Realisasi Keuangan</th>
+                                <th>Capaian Keuangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="realisasiHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/realisasi.js"></script>
+</body>
+</html>
